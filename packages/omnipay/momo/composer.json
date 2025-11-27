@@ -1,0 +1,34 @@
+{
+    "name": "omnipay/momo",
+    "description": "Package Support Paypal MoMo",
+    "type": "library",
+    "require": {
+        "illuminate/support": "^7.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "hoatd",
+            "email": "tranduyhoa94@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Omnipay\\Momo\\": "omnipay\/momo\/src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Omnipay\\Momo\\MomoServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "require-dev": {
+    },
+    "minimum-stability": "dev"
+}

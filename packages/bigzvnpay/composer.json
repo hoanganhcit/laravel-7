@@ -1,0 +1,34 @@
+{
+    "name": "bigz/bigzvnpay",
+    "description": "Package Support Payment VNPay",
+    "type": "library",
+    "require": {
+        "illuminate/support": "^7.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "trivh",
+            "email": "vuonghuutri.cit@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Bigzvnpay\\": "bigzvnpay\/src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bigzvnpay\\VnpayServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "require-dev": {
+    },
+    "minimum-stability": "dev"
+}

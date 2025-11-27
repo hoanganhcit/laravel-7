@@ -1,0 +1,3 @@
+// add column sell to 2 table product, variation
+ALTER TABLE ecommerce_lanci.variations ADD COLUMN sell INT DEFAULT 0;
+ALTER TABLE ecommerce_lanci.products ADD COLUMN sell INT DEFAULT 0;
