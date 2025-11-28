@@ -9,6 +9,7 @@
     <meta name="author" content="Thái Bá Hoàng Anh">
     <meta name="generator" content="Cosmetics">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="app-url" content="{{ config('app.url') }}">
     <title>{{ $title }} </title>
     <link rel="canonical" href="{{ $canonical }}" />
     <link rel='shortlink' href="{{ $canonical }}" />
@@ -68,7 +69,7 @@
     @include('site.partials.header')
     
     <main id="content">
-        @include('site.pages.landing')
+        @yield('content')
     </main>
     @include('site.partials.footer')
     
@@ -90,6 +91,7 @@
     <script src="{{ asset('public/site/js/custom.js') }}"></script>
     <script src="{{ asset('public/site/js/alertify.min.js') }}"></script>
     <script src="{{ asset('public/site/js/typeahead.bundle.min.js') }}"></script>
+    <script src="{{ asset('public/site/js/cart.js') }}"></script>
 
     <div class="position-fixed pos-fixed-bottom-right p-6 z-index-10">
         <a href="#"
@@ -98,7 +100,8 @@
     </div>
     
 
-    @include('site.pages.products._quickview')  
+    @include('site.pages.products._quickview')
+    @include('site.partials.sidebar-cart')  
 
     @yield('scripts')
     @stack('scripts')

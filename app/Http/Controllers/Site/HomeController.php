@@ -49,13 +49,22 @@ class HomeController extends Controller
             ->with(['categories', 'brand', 'variations'])
             ->get();
 
+        // Load 6 sản phẩm giảm giá mới nhất
+        $sale_products = Product::where('status', 1)
+            ->whereNotNull('discount_price')
+            ->whereColumn('discount_price', '<', 'price')
+            ->orderBy('created_at', 'DESC')
+            ->limit(6)
+            ->with(['categories', 'brand', 'variations'])
+            ->get();
+
         // Load banners
         $banners = Banner::all();
 
         $productCategories = ProductCategory::all();
         Session::put('product_categories', $productCategories ?? []);
         
-        return view('site.index', compact(
+        return view('site.pages.landing', compact(
             'canonical',
             'title',
             'description',
@@ -64,7 +73,8 @@ class HomeController extends Controller
             'post_feature',
             'products',
             'banners',
-            'featured_products'
+            'featured_products',
+            'sale_products'
         ));
     }
 }

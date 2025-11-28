@@ -121,11 +121,21 @@ Route::group(['prefix' => '/', 'as' => 'site.', 'namespace' => 'Site'], function
     // Home
     Route::get('/', 'HomeController@index')->name('index');
     
+    // Shop
+    Route::get('shop', 'ShopController@index')->name('shop.index');
+    
     // Product Category
     Route::get('product-category/{id}', 'ProductCategoryController@show')->name('product-category.show');
     
     // Product Quick View
     Route::get('product/quick-view/{id}', 'ProductController@quickView')->name('product.quickView');
+    
+    // Cart
+    Route::post('cart/add', 'CartController@add')->name('cart.add');
+    Route::post('cart/update', 'CartController@update')->name('cart.update');
+    Route::post('cart/remove', 'CartController@remove')->name('cart.remove');
+    Route::get('cart/get', 'CartController@get')->name('cart.get');
+    Route::post('cart/clear', 'CartController@clear')->name('cart.clear');
 });
 
 

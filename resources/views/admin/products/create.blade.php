@@ -175,23 +175,6 @@
                                         @endif
                                     </div>
                                 </div>
-                                <div class="col-lg-12 col-md-12">
-                                    <div class="form-group">
-                                        <label for="date_discount_period">Thời gian giảm giá</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fal fa-calendar-alt"></i></span>
-                                            </div>
-                                            <input class="form-control datepicker date_discount_period" type="text"
-                                                name="date_discount_period" id="date_discount_period" value="">
-                                        </div>
-                                        @if ($errors->has('date_discount_period'))
-                                            <div class="invalid-feedback">
-                                                {{ $errors->first('date_discount_period') }}
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -435,6 +418,30 @@
         const productAttributesData = @json($productAttributes);
         console.log('Product Attributes Data:', productAttributesData);
         
+        // Xử lý tự động điền giá cho variations khi thay đổi giá sản phẩm
+        $('#price').on('input', function() {
+            const basePrice = $(this).val();
+            if (basePrice && basePrice > 0) {
+                $('input[name$="[price]"]').each(function() {
+                    if ($(this).attr('name').includes('variations[')) {
+                        $(this).val(basePrice);
+                    }
+                });
+            }
+        });
+        
+        // Xử lý tự động điền giá giảm cho variations
+        $('#discount_price').on('input', function() {
+            const discountPrice = $(this).val();
+            if (discountPrice && discountPrice > 0) {
+                $('input[name$="[price]"]').each(function() {
+                    if ($(this).attr('name').includes('variations[')) {
+                        $(this).val(discountPrice);
+                    }
+                });
+            }
+        });
+        
         // Khi chọn attribute
         $('#product_attribute').on('change', function() {
             const attributeId = $(this).val();
@@ -496,6 +503,9 @@
             const checkedValues = $('.variation-value-checkbox:checked');
             let inputsHtml = '';
             
+            // Lấy giá hiện tại từ form
+            const currentPrice = $('#discount_price').val() || $('#price').val() || 0;
+            
             if (checkedValues.length > 0) {
                 inputsHtml = '<h5 class="mt-3 mb-3">Nhập thông tin cho từng biến thể</h5>';
                 
@@ -524,7 +534,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Giá <span class="text-danger">*</span></label>
-                                            <input type="number" name="variations[${index}][price]" class="form-control" placeholder="0" required>
+                                            <input type="number" name="variations[${index}][price]" class="form-control" placeholder="0" value="${currentPrice}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">

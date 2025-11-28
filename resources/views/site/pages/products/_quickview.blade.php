@@ -194,17 +194,37 @@
                                 }).join(', ');
                             }
                             
+                            // Build attributes
+                            var attributesHtml = '';
+                            if (product.attributes && product.attributes.length > 0) {
+                                product.attributes.forEach(function(attr) {
+                                    if (attr.attribute_values && attr.attribute_values.length > 0) {
+                                        attributesHtml += '<div class="form-group mb-4">' +
+                                            '<span class="font-weight-600 text-secondary d-block mb-3">' + attr.name + ': </span>' +
+                                            '<ul class="list-inline d-flex justify-content-start mb-0">';
+                                        
+                                        attr.attribute_values.forEach(function(value, index) {
+                                            attributesHtml += '<li class="list-inline-item mr-2 font-weight-600' + (index === 0 ? ' selected' : '') + '">' +
+                                                '<a href="#" class="fs-14 p-2 lh-13 d-block swatches-item rounded text-decoration-none border" data-attr-id="' + attr.id + '" data-value-id="' + value.id + '">' + value.value + '</a>' +
+                                                '</li>';
+                                        });
+                                        
+                                        attributesHtml += '</ul></div>';
+                                    }
+                                });
+                            }
+
                             var actionAddToCart = '<div class="row align-items-end no-gutters mx-n2">' +
                                 '<div class="col-sm-4 form-group px-2 mb-6">' +
-                                '<label class="text-secondary font-weight-600 mb-3" for="quickview-number">Quantity: </label>' +
+                                '<label class="text-secondary font-weight-600 mb-3" for="quickview-number">Số lượng: </label>' +
                                 '<div class="input-group position-relative w-100">' +
                                 '<a href="#" class="down position-absolute pos-fixed-left-center pl-4 z-index-2"><i class="far fa-minus"></i></a>' +
-                                '<input name="number" type="number" id="quickview-number" class="form-control w-100 px-6 text-center input-quality text-secondary h-60 fs-18 font-weight-bold border-0" value="1" required>' +
+                                '<input name="number" type="number" id="quickview-number" class="form-control w-100 px-6 text-center input-quality text-secondary font-weight-bold border-0" value="1" required>' +
                                 '<a href="#" class="up position-absolute pos-fixed-right-center pr-4 z-index-2"><i class="far fa-plus"></i></a>' +
                                 '</div>' +
                                 '</div>' +
                                 '<div class="col-sm-8 mb-6 w-100 px-2">' +
-                                '<button type="submit" class="btn btn-lg fs-18 btn-secondary btn-block h-60 bg-hover-primary border-0">Add To Bag</button>' +
+                                '<button type="button" class="btn  btn-secondary btn-block bg-hover-primary h-60 add-to-cart">Thêm vào giỏ hàng</button>' +
                                 '</div>' +
                                 '</div>';
 
@@ -215,7 +235,7 @@
                                     '<p class="text-muted mb-3"><strong>Thương hiệu:</strong> ' +
                                     product.brand.name + '</p>' : '') +
                                 (product.short_description ? '<p class="mb-4">' + product
-                                    .short_description + '</p>' : '') +
+                                    .short_description + '</p>' : '') + attributesHtml +
                                 actionAddToCart +
                                 '<ul class="list-unstyled border-top pt-4 mt-4">' +
                                 '<li class="row mb-2">' +

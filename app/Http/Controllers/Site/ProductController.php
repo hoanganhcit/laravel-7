@@ -31,8 +31,47 @@ class ProductController extends Controller
                 ->whereNull('deleted_at')
                 ->get();
             
+            // Get attributes from variations meta
+            $attributes = [];
+            if ($product->variations && $product->variations->count() > 0) {
+                foreach ($product->variations as $variation) {
+                    if ($variation->meta) {
+                        $metaData = json_decode($variation->meta, true);
+                        if (is_array($metaData)) {
+                            foreach ($metaData as $attrId => $attrValues) {
+                                if (!isset($attributes[$attrId])) {
+                                    $productAttribute = \App\Models\ProductAttribute::find($attrId);
+                                    if ($productAttribute) {
+                                        $attributes[$attrId] = [
+                                            'id' => $productAttribute->id,
+                                            'name' => $productAttribute->title,
+                                            'attribute_values' => []
+                                        ];
+                                    }
+                                }
+                                
+                                if (isset($attributes[$attrId])) {
+                                    foreach ($attrValues as $valueData) {
+                                        $valueId = $valueData['id'] ?? null;
+                                        if ($valueId && !in_array($valueId, array_column($attributes[$attrId]['attribute_values'], 'id'))) {
+                                            $attributes[$attrId]['attribute_values'][] = [
+                                                'id' => $valueId,
+                                                'value' => $valueData['name'] ?? ''
+                                            ];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            $product->attributes = array_values($attributes);
+            
             \Log::info('Product found: ' . $product->name);
             \Log::info('Galleries count: ' . $galleries->count());
+            \Log::info('Attributes: ' . json_encode($attributes));
             
             return response()->json([
                 'success' => true,

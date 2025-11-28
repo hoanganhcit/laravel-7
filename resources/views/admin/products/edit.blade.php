@@ -169,23 +169,6 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-12">
-                                <div class="form-group">
-                                    <label for="date_discount_period">Thời gian giảm giá</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fal fa-calendar-alt"></i></span>
-                                        </div>
-                                        <input class="form-control datepicker date_discount_period" type="text"
-                                               name="date_discount_period" id="date_discount_period" value="{{ old('date_discount_period', $product->date_discount_period) }}">
-                                    </div>
-                                    @if ($errors->has('date_discount_period'))
-                                        <div class="invalid-feedback">
-                                            {{ $errors->first('date_discount_period') }}
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -255,15 +238,23 @@
                         <div class="row with-variant wraper-variation-list {{ 0 == old('is_variation', $product->is_variation) ? 'd-none' : '' }}"
                              id="div_variations">
                             <div class="col-lg-12 col-md-12">
-                                <div class="variations-title">Danh sách biến thể
-                                    <button class="btn btn-success" type="button" id="btn_add_variation">
-                                        Thêm biến thể
-                                    </button>
-                                    <input type="hidden" name="keyCurrentVariation" id="key_current_variation" value="{{ count($product->variations) }}"/>
+                                <div class="form-group">
+                                    <label for="product_attribute">Chọn Thuộc Tính (Ví dụ: Dung tích, Màu sắc, Kích thước)</label>
+                                    <select name="product_attribute_id" id="product_attribute" class="form-control select2">
+                                        <option value="">-- Chọn thuộc tính --</option>
+                                        @foreach($attributes as $attribute)
+                                            <option value="{{ $attribute->id }}">{{ $attribute->title }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
-                            <div class="col-lg-1 col-md-0">&nbsp;</div>
-                            <div class="col-lg-10 col-md-12" id="div_variation_child">
+                            <div class="col-lg-12 col-md-12" id="variation_values_container" style="display: none;">
+                                <div class="form-group">
+                                    <label>Chọn các giá trị biến thể</label>
+                                    <div id="attribute_values_checkboxes"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12" id="variations_inputs_container">
                                 {!! $variationsHtml !!}
                             </div>
                         </div>
@@ -426,4 +417,29 @@
     <script src="{{ asset('public/vendor/laravel-filemanager/js/stand-alone-button.js') }}"></script>
     <script src="{{ asset('public/admin/modules/product/js/index.js') }}"></script>
     <script src="{{ asset('public/admin/modules/product/js/edit.js') }}"></script>
+    <script>
+        // Xử lý tự động điền giá cho variations khi thay đổi giá sản phẩm
+        $('#price').on('input', function() {
+            const basePrice = $(this).val();
+            if (basePrice && basePrice > 0) {
+                $('input[name$="[price]"]').each(function() {
+                    if ($(this).attr('name').includes('variations[')) {
+                        $(this).val(basePrice);
+                    }
+                });
+            }
+        });
+        
+        // Xử lý tự động điền giá giảm cho variations
+        $('#discount_price').on('input', function() {
+            const discountPrice = $(this).val();
+            if (discountPrice && discountPrice > 0) {
+                $('input[name$="[price]"]').each(function() {
+                    if ($(this).attr('name').includes('variations[')) {
+                        $(this).val(discountPrice);
+                    }
+                });
+            }
+        });
+    </script>
 @endsection

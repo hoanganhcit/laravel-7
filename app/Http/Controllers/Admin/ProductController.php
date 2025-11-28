@@ -133,6 +133,7 @@ class ProductController extends Controller
             'tags',
             'brands',
             'galleries',
+            'attributes',
             'variationsHtml'
         ));
     }
