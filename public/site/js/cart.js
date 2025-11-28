@@ -30,7 +30,7 @@
                         Cart.showMessage(response.message || 'Đã thêm vào giỏ hàng', 'success');
                         
                         // Open cart sidebar
-                        $('.cart-canvas').addClass('show-canvas');
+                        $('.cart-canvas').addClass('show');
                     }
                 },
                 error: function(xhr) {
@@ -116,9 +116,23 @@
                 // Update header cart count badge
                 $('.header-cart-count').text(response.summary.total_items);
                 
-                // Update header cart total price
-                $('#header-cart-total').text(Cart.formatPrice(response.summary.total_price));
-                $('#header-cart-total-mobile').text(Cart.formatPrice(response.summary.total_price));
+                // Update header cart total price - show/hide based on total
+                if (response.summary.total_price > 0) {
+                    if ($('#header-cart-total').length === 0) {
+                        $('.open-cart i.fa-shopping-bag').first().before('<span class="mr-2 font-weight-bold fs-15" id="header-cart-total">' + Cart.formatPrice(response.summary.total_price) + '</span>');
+                    } else {
+                        $('#header-cart-total').text(Cart.formatPrice(response.summary.total_price)).show();
+                    }
+                    
+                    if ($('#header-cart-total-mobile').length === 0) {
+                        $('.open-cart i.fa-shopping-bag').last().before('<span class="mr-2 font-weight-bold fs-15" id="header-cart-total-mobile">' + Cart.formatPrice(response.summary.total_price) + '</span>');
+                    } else {
+                        $('#header-cart-total-mobile').text(Cart.formatPrice(response.summary.total_price)).show();
+                    }
+                } else {
+                    $('#header-cart-total').hide();
+                    $('#header-cart-total-mobile').hide();
+                }
             }
         },
 
@@ -151,8 +165,61 @@
             
             const $btn = $(this);
             const productId = $btn.data('product-id') || $btn.closest('.product').find('.quick-view-btn').data('product-id');
-            const quantity = $btn.data('quantity') || 1;
-            const variationId = $btn.data('variation-id') || null;
+            const hasAttributes = $btn.data('has-attributes') == '1';
+            
+            // Check if in quickview modal
+            let quantity = 1;
+            let variationId = null;
+            
+            if ($btn.closest('#quick-view').length > 0) {
+                quantity = parseInt($('#quickview-number').val()) || 1;
+                
+                // If product has attributes, validate selection
+                if (hasAttributes) {
+                    const $attributeGroups = $('.attribute-group');
+                    let allSelected = true;
+                    let missingAttributes = [];
+                    
+                    $attributeGroups.each(function() {
+                        const $group = $(this);
+                        const attrName = $group.find('span.font-weight-600').first().text().replace(':', '').trim();
+                        const $selected = $group.find('.swatches-item.selected');
+                        
+                        if ($selected.length === 0) {
+                            allSelected = false;
+                            missingAttributes.push(attrName);
+                        }
+                    });
+                    
+                    if (!allSelected) {
+                        Cart.showMessage('Vui lòng chọn: ' + missingAttributes.join(', '), 'error');
+                        return;
+                    }
+                    
+                    // Get selected attributes to find variation
+                    const selectedAttrs = {};
+                    $('.swatches-item.selected').each(function() {
+                        const attrId = $(this).data('attr-id');
+                        const valueId = $(this).data('value-id');
+                        const valueName = $(this).data('value-name');
+                        
+                        if (!selectedAttrs[attrId]) {
+                            selectedAttrs[attrId] = [];
+                        }
+                        selectedAttrs[attrId].push({
+                            id: valueId,
+                            name: valueName
+                        });
+                    });
+                    
+                    // Store selected attributes in button data for variation lookup
+                    $btn.data('selected-attributes', JSON.stringify(selectedAttrs));
+                }
+            } else {
+                quantity = parseInt($btn.data('quantity')) || 1;
+            }
+            
+            variationId = $btn.data('variation-id') || null;
 
             if (!productId) {
                 Cart.showMessage('Không tìm thấy thông tin sản phẩm', 'error');
@@ -205,13 +272,30 @@
 
         // Canvas close
         $(document).on('click', '.canvas-close, .canvas-overlay', function() {
-            $('.cart-canvas').removeClass('show-canvas');
+            $('.cart-canvas').removeClass('show');
         });
 
         // Open cart canvas
         $(document).on('click', '.open-cart', function(e) {
             e.preventDefault();
-            $('.cart-canvas').addClass('show-canvas');
+            $('.cart-canvas').addClass('show');
+        });
+
+        // Quickview quantity controls
+        $(document).on('click', '#quick-view .up', function(e) {
+            e.preventDefault();
+            const $input = $('#quickview-number');
+            const currentVal = parseInt($input.val()) || 1;
+            $input.val(currentVal + 1);
+        });
+
+        $(document).on('click', '#quick-view .down', function(e) {
+            e.preventDefault();
+            const $input = $('#quickview-number');
+            const currentVal = parseInt($input.val()) || 1;
+            if (currentVal > 1) {
+                $input.val(currentVal - 1);
+            }
         });
     });
 

@@ -199,13 +199,13 @@
                             if (product.attributes && product.attributes.length > 0) {
                                 product.attributes.forEach(function(attr) {
                                     if (attr.attribute_values && attr.attribute_values.length > 0) {
-                                        attributesHtml += '<div class="form-group mb-4">' +
-                                            '<span class="font-weight-600 text-secondary d-block mb-3">' + attr.name + ': </span>' +
-                                            '<ul class="list-inline d-flex justify-content-start mb-0">';
+                                        attributesHtml += '<div class="form-group mb-4 attribute-group" data-attr-id="' + attr.id + '">' +
+                                            '<span class="font-weight-600 text-secondary d-block mb-3">' + attr.name + ': <span class="text-danger">*</span></span>' +
+                                            '<ul class="list-inline d-flex justify-content-start mb-0 flex-wrap">';
                                         
                                         attr.attribute_values.forEach(function(value, index) {
-                                            attributesHtml += '<li class="list-inline-item mr-2 font-weight-600' + (index === 0 ? ' selected' : '') + '">' +
-                                                '<a href="#" class="fs-14 p-2 lh-13 d-block swatches-item rounded text-decoration-none border" data-attr-id="' + attr.id + '" data-value-id="' + value.id + '">' + value.value + '</a>' +
+                                            attributesHtml += '<li class="list-inline-item mr-2 mb-2">' +
+                                                '<a href="#" class="fs-14 p-2 lh-13 d-block swatches-item rounded text-decoration-none border' + (index === 0 ? ' selected' : '') + '" data-attr-id="' + attr.id + '" data-value-id="' + value.id + '" data-value-name="' + value.value + '">' + value.value + '</a>' +
                                                 '</li>';
                                         });
                                         
@@ -224,7 +224,7 @@
                                 '</div>' +
                                 '</div>' +
                                 '<div class="col-sm-8 mb-6 w-100 px-2">' +
-                                '<button type="button" class="btn  btn-secondary btn-block bg-hover-primary h-60 add-to-cart">Thêm vào giỏ hàng</button>' +
+                                '<button type="button" class="btn btn-secondary btn-block bg-hover-primary h-60 add-to-cart" data-product-id="' + product.id + '" data-has-attributes="' + (product.attributes && product.attributes.length > 0 ? '1' : '0') + '">Thêm vào giỏ hàng</button>' +
                                 '</div>' +
                                 '</div>';
 
@@ -256,6 +256,19 @@
                                 '</ul>';
 
                             $('#quickview-content').html(contentHtml);
+                            
+                            // Add click event for attribute selection
+                            $(document).off('click', '.swatches-item').on('click', '.swatches-item', function(e) {
+                                e.preventDefault();
+                                var $this = $(this);
+                                var attrId = $this.data('attr-id');
+                                
+                                // Remove selected class from siblings
+                                $this.closest('ul').find('.swatches-item').removeClass('selected');
+                                
+                                // Add selected class to clicked item
+                                $this.addClass('selected');
+                            });
                         } else {
                             $('#quickview-content').html(
                                 '<p class="text-danger text-center">Không tìm thấy thông tin sản phẩm</p>'

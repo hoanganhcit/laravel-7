@@ -2076,3 +2076,9 @@ span.radio__label__accessory {
         max-width: 100%;
     }
 } 
+
+.border-black {
+    background: #FFF !important;
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+}

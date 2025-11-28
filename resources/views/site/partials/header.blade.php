@@ -38,7 +38,9 @@
                                                     $count += $item['quantity'];
                                                 }
                                             @endphp
-                                            <span class="mr-2 font-weight-bold fs-15" id="header-cart-total">{{ number_format($total) }}đ</span>
+                                            @if($total > 0)
+                                                <span class="mr-2 font-weight-bold fs-15" id="header-cart-total">{{ number_format($total) }}đ</span>
+                                            @endif
                                             <i class="fal fa-shopping-bag fs-22"></i>
                                             <span class="position-absolute number header-cart-count">{{ $count }}</span>
                                         </a>
@@ -69,7 +71,9 @@
                                     $count += $item['quantity'];
                                 }
                             @endphp
-                            <span class="mr-2 font-weight-bold fs-15" id="header-cart-total-mobile">{{ number_format($total) }}đ</span>
+                            @if($total > 0)
+                                <span class="mr-2 font-weight-bold fs-15" id="header-cart-total-mobile">{{ number_format($total) }}đ</span>
+                            @endif
                             <i class="fal fa-shopping-bag fs-22"></i>
                             <span class="position-absolute number header-cart-count">{{ $count }}</span>
                         </a>

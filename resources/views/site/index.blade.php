@@ -34,6 +34,22 @@
     <link rel="stylesheet" href="{{ asset('public/site/css/themes.css') }}">
     <link rel="stylesheet" href="{{ asset('public/site/css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('public/site/css/responsive.css') }}">
+    
+    <style>
+        .swatches-item {
+            transition: all 0.3s ease;
+        }
+        .swatches-item.selected {
+            border-color: #212529 !important;
+            background-color: #212529 !important;
+            color: #fff !important;
+            font-weight: 600;
+        }
+        .swatches-item:hover {
+            border-color: #212529 !important;
+        }
+    </style>
+    
     @php
         $settings = App\Models\Setting::first();
         $favicon = $settings->favicon ?? null;
